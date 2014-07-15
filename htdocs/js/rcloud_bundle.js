@@ -999,10 +999,12 @@ ui_utils.editable = function(elem$, command) {
         return elem$.data('__editable');
     }
     function encode(s) {
-        return s.replace(/  /g, ' \xa0'); // replace every space with nbsp
+        s =  s.replace(/  /g, ' \xa0'); // replace every space with nbsp
+        return s.replace(/\n/g, '<br>'); //replace every newline with <br>
     }
     function decode(s) {
-        return s.replace(/\xa0/g,' '); // replace nbsp's with spaces
+        s = s.replace(/\xa0/g,' '); // replace nbsp's with spaces
+        return s.replace(/<br>/g, '\n'); //replace <br>'s with newline
     }
 
     var old_opts = options(),
@@ -1062,7 +1064,7 @@ ui_utils.editable = function(elem$, command) {
         action = 'freeze';
 
     if(new_opts)
-        elem$.text(encode(options().__active ? new_opts.active_text : new_opts.inactive_text));
+        elem$.html(encode(options().__active ? new_opts.active_text : new_opts.inactive_text));
 
     switch(action) {
     case 'freeze':
@@ -1077,12 +1079,12 @@ ui_utils.editable = function(elem$, command) {
         elem$.focus(function() {
             if(!options().__active) {
                 options().__active = true;
-                elem$.text(encode(options().active_text));
+                elem$.html(encode(options().active_text));
                 window.setTimeout(function() {
                     selectRange(options().select(elem$[0]));
                     elem$.off('blur');
                     elem$.blur(function() {
-                        elem$.text(encode(options().inactive_text));
+                        elem$.html(encode(options().inactive_text));
                         options().__active = false;
                     }); // click-off cancels
                 }, 10);
