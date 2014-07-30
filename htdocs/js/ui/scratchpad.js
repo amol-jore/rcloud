@@ -75,7 +75,7 @@ RCloud.UI.scratchpad = {
                     }
                 };
                 shell.notebook.controller
-                    .append_asset(comment_text("New file " + filename, filename.match(/\.(.*)/)[1]), filename)
+                    .append_asset(comment_text("New file " + filename, filename.match(/\.(.*)/)), filename)
                     .then(function(controller) {
                         controller.select();
                     })
