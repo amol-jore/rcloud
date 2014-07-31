@@ -151,6 +151,8 @@ var editor = function () {
     function find_next_copy_name(username, description) {
         var pid = node_id("alls", username);
         var parent = $tree_.tree('getNodeById', pid);
+        if(parent === undefined)
+            return description;
         if(parent.delay_children)
             load_children(parent);
         var map = _.object(_.map(parent.children, function(c) { return [c.name, true]; }));
@@ -1216,8 +1218,7 @@ var editor = function () {
         },
         new_notebook: function() {
             var that = this;
-            return rcloud.config.new_notebook_number()
-                .then(function(number) { return "Notebook " + number; })
+            return Promise.cast(find_next_copy_name(username_,"Notebook 1"))
                 .then(shell.new_notebook.bind(shell))
                 .then(function(notebook) {
                     set_visibility(notebook.id, true);
@@ -1351,6 +1352,7 @@ var editor = function () {
                 current_ = {notebook: result.id, version: options.version};
                 rcloud.config.set_current_notebook(current_);
                 rcloud.config.set_recent_notebook(result.id, (new Date()).toString());
+                RCloud.UI.share_button.set_link(result);
 
                 /*
                 // disabling inter-notebook navigation for now - concurrency issues
