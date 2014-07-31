@@ -1,4 +1,4 @@
-RCloud.UI.upload_files = (function() {
+RCloud.UI.upload_with_alerts = (function() {
     function upload_ui_opts(opts) {
         if(_.isBoolean(opts))
             opts = {force: opts};
@@ -21,9 +21,10 @@ RCloud.UI.upload_files = (function() {
         function results_append($div) {
             options.$upload_results.append($div);
             options.$result_panel.trigger("size-changed");
-            ui_utils.on_next_tick(function() {
-                ui_utils.scroll_to_after($("#file-upload-results"));
-            });
+            if(options.$upload_results.length)
+                ui_utils.on_next_tick(function() {
+                    ui_utils.scroll_to_after(options.$upload_results);
+                });
         }
 
         function result_alert($content) {
@@ -40,8 +41,8 @@ RCloud.UI.upload_files = (function() {
                     "class": 'alert-info',
                     text: message,
                     on_close: function() {
-                        $(".progress").hide();
-                        $("#collapse-file-upload").trigger("size-changed");
+                        options.$progress.hide();
+                        options.$result_panel.trigger("size-changed");
                     }
                 }));
         }
@@ -91,7 +92,8 @@ RCloud.UI.upload_files = (function() {
         }
 
         options = upload_ui_opts(options || {});
-        RCloud.UI.right_panel.collapse($("#collapse-file-upload"), false);
+        if(options.$result_panel.length)
+            RCloud.UI.right_panel.collapse(options.$result_panel, false);
 
         var file_error_handler = Promise.promisify(function(err, options, callback) {
             var message = err.message;
@@ -120,9 +122,10 @@ RCloud.UI.upload_files = (function() {
         return promise.catch(function(err) {
             return file_error_handler(err, options);
         }).then(function() {
-            window.setTimeout(function() {
-                $(".progress").hide();
-            }, 5000);
+            if(options.$progress.length)
+                window.setTimeout(function() {
+                    $(".progress").hide();
+                }, 5000);
         });
     }
 
