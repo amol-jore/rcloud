@@ -19,7 +19,7 @@ rcloud.get.comments <- function(id)
 
   ## send the update request
   curlTemplate <- paste0(url,"/update/json?commit=true")
-  metadata <- paste0('{"id":"', id, '","comments":{"', method, '":"', paste(comment.id,':::',comment.content,':::',.session$rgithub.context$user$login), '"}}')
+  metadata <- paste0('{"id":"', id, '","comments":{"', method, '":"', paste(comment.id,'|||',comment.content,'|||',.session$rgithub.context$user$login), '"}}')
   postForm(curlTemplate, .opts = list(
                            postfields = paste0("[",metadata,"]"),
                            httpheader = c('Content-Type' = 'application/json',Accept = 'application/json')))
@@ -33,16 +33,8 @@ rcloud.post.comment <- function(id, content)
 }
 
 .solr.modify.comment <- function(id, content, cid) {
-  url <- getConf("solr.url")
-  solr.url <- URLencode(paste0(url, "/select?q=id:",id,"&start=0&rows=1000&fl=comments&wt=json"))
-  solr.res <- fromJSON(getURL(solr.url,.encoding = 'utf-8',.mapUnicode=FALSE))
-  index <- grep(cid, solr.res$response$docs[[1]]$comments)
-  solr.res$response$docs[[1]]$comments[[index]] <- paste(cid, fromJSON(content)$body, sep=' : ')
-  curlTemplate <- paste0(url,"/update/json?commit=true")
-  metadata <- paste0('{"id":"',id,'","comments":{"set":[\"',paste(solr.res$response$docs[[1]]$comments, collapse="\",\""),'\"]}}')
-  postForm(curlTemplate, .opts = list(
-                           postfields = paste0("[",metadata,"]"),
-                           httpheader = c('Content-Type' = 'application/json',Accept = 'application/json')))
+  .solr.delete.comment(id,cid)
+  .solr.post.comment(id, content, cid)
 }
 
 rcloud.modify.comment <- function(id, cid, content)
@@ -60,7 +52,6 @@ rcloud.modify.comment <- function(id, cid, content)
   solr.res$response$docs[[1]]$comments <- solr.res$response$docs[[1]]$comments[-index]
   curlTemplate <- paste0(url,"/update/json?commit=true")
   metadata <- paste0('{"id":"',id,'","comments":{"set":[\"',paste(solr.res$response$docs[[1]]$comments, collapse="\",\""),'\"]}}')
-  write(metadata, "/vagrant/work/debug/deletec")
   postForm(curlTemplate, .opts = list(
                            postfields = paste0("[",metadata,"]"),
                            httpheader = c('Content-Type' = 'application/json',Accept = 'application/json')))
