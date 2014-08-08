@@ -20,10 +20,22 @@ Notebook.Asset.create_html_view = function(asset_model)
             filename_span.text(asset_old_name);
             return;
         }
-        var found = shell.notebook.model.has_asset(new_asset_name);
+        var found = shell.notebook.model.get_asset(new_asset_name);
         if (found){
-            filename_span.text(asset_old_name);
-            found.controller.select();
+            var yn = confirm("Asset with name "+new_asset_name+" already exists do you want to replace?");
+            if(yn) {
+                asset_model.controller.remove(true);
+                found.controller.remove(true);
+                shell.notebook.controller
+                    .append_asset(old_asset_content, new_asset_name)
+                    .then(function (controller) {
+                        controller.select();
+                    });
+
+            } else {
+                filename_span.text(asset_old_name);
+                found.controller.select();
+            }
         }
         else {
             shell.notebook.controller

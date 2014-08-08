@@ -32,6 +32,13 @@ Notebook.create_model = function()
                 return asset.filename() == filename;
             });
         },
+        get_asset:function(filename) {
+            return _.find(this.assets, function(asset) {
+                if(asset.filename() == filename) {
+                    return asset;
+                }
+            });
+        },
         append_asset: function(asset_model, filename, skip_event) {
             asset_model.parent_model = this;
             var changes = [];

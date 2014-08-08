@@ -1179,10 +1179,22 @@ Notebook.Asset.create_html_view = function(asset_model)
             filename_span.text(asset_old_name);
             return;
         }
-        var found = shell.notebook.model.has_asset(new_asset_name);
+        var found = shell.notebook.model.get_asset(new_asset_name);
         if (found){
-            filename_span.text(asset_old_name);
-            found.controller.select();
+            var yn = confirm("Asset with name "+new_asset_name+" already exists do you want to replace?");
+            if(yn) {
+                asset_model.controller.remove(true);
+                found.controller.remove(true);
+                shell.notebook.controller
+                    .append_asset(old_asset_content, new_asset_name)
+                    .then(function (controller) {
+                        controller.select();
+                    });
+
+            } else {
+                filename_span.text(asset_old_name);
+                found.controller.select();
+            }
         }
         else {
             shell.notebook.controller
@@ -2036,6 +2048,13 @@ Notebook.create_model = function()
             var cells_removed = this.remove_cell(null,last_id(this.cells));
             var assets_removed = this.remove_asset(null,this.assets.length);
             return cells_removed.concat(assets_removed);
+        },
+        get_asset:function(filename) {
+            return _.find(this.assets, function(asset) {
+                if(asset.filename() == filename) {
+                    return asset;
+                }
+            });
         },
         has_asset: function(filename) {
             return _.find(this.assets, function(asset) {
