@@ -23,13 +23,20 @@ rcloud.load.notebook <- function(id, version = NULL) {
     rcloud.reset.session()
   }
 
+  write(length(res$content$history),"/vagrant/work/temp/len.txt")
 
   for(i in 1:length(res$content$history)) {
     ###load it from redis or ff ow just assign the same as version(10)
     res$content$history[[i]]$tag <- res$content$history[[i]]$version;
-    if (rcs.get(res$content$history[[i]]$version)!=null) {
-      res$content$history[[i]]$tag <- paste0(rcs.get(res$content$history[[i]]$version));
-    }
+    write(res$content$history[[i]]$version,paste0("/vagrant/work/temp/",res$content$history[[i]]$version,".txt"))
+    tryCatch({
+      if (!is.na(rcs.get(res$content$history[[i]]$version))) {
+        write(res$content$history[[i]]$version,paste0("/vagrant/work/temp/in-if-",res$content$history[[i]]$version,".txt"))
+        res$content$history[[i]]$tag <- rcs.get(res$content$history[[i]]$version);
+      }
+      },
+      error=function(e){}
+    )
   }
   res
 }
