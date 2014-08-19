@@ -177,6 +177,7 @@ RCloud.create = function(rcloud_ocaps) {
             ["get_conf_value"],
             ["get_notebook"],
             ["load_notebook"],
+            ["tag_notebook_version"],
             ["call_notebook"],
             ["install_notebook_stylesheets"],
             ["get_users"],
@@ -240,6 +241,10 @@ RCloud.create = function(rcloud_ocaps) {
             return rcloud_github_handler(
                 "rcloud.load.notebook " + id,
                 rcloud_ocaps.load_notebookAsync(id, version));
+        };
+
+        rcloud.tag_notebook_version = function(version,tag_name) {
+            return rcloud_ocaps.tag_notebook_versionAsync(version,tag_name);
         };
 
         rcloud.call_notebook = function(id, version) {

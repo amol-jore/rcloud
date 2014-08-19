@@ -560,7 +560,7 @@ var editor = function () {
             function add_hist_node(hist, insf, color) {
                 var hdat = _.clone(node);
                 var sha = hist.version.substring(0, 10);
-                hdat.label = sha;
+                hdat.label = hist.tag;
                 hdat.version = hist.version;
                 hdat.last_commit = hist.committed_at;
                 hdat.id = node.id + '/' + hdat.version;
@@ -667,11 +667,14 @@ var editor = function () {
     function select_node(node) {
         $tree_.tree('selectNode', node);
         scroll_into_view(node);
-        if(!node.version)
+        if(!node.version) {
             RCloud.UI.notebook_title.make_editable(
                 node,
                 !shell.notebook.model.read_only());
-        else RCloud.UI.notebook_title.make_editable(null);
+        }
+        else {
+            RCloud.UI.notebook_title.make_editable(null);//node,false);
+        }
     }
 
     function update_tree_entry(root, user, gistname, entry, create) {
@@ -915,8 +918,10 @@ var editor = function () {
         title.css('color', node.color);
         if(node.gistname && !node.visible)
             title.addClass('private');
-        if(node.version || node.id === 'showmore')
+        if(node.version || node.id === 'showmore') {
             title.addClass('history');
+            //RCloud.UI.notebook_title.make_editable(node, false);
+        }
         var right = $($.el.span({'class': 'notebook-right'}));
         if(node.last_commit && (!node.version ||
                                 display_date(node.last_commit) != display_date(node.parent.last_commit))) {
@@ -1062,8 +1067,9 @@ var editor = function () {
         return url;
     }
     function tree_click(event) {
-        if(event.node.id === 'showmore')
+        if(event.node.id === 'showmore') {
             result.show_history(event.node.parent, false);
+        }
         else if(event.node.gistname) {
             if(event.click_event.metaKey || event.click_event.ctrlKey)
                 result.open_notebook(event.node.gistname, event.node.version, true, true);
@@ -1071,14 +1077,22 @@ var editor = function () {
                 // it's weird that a notebook exists in two trees but only one is selected (#220)
                 // just select - and this enables editability
                 if(event.node.gistname === current_.notebook &&
-                   event.node.version == current_.version) // nulliness ok here
+                   event.node.version == current_.version && event.node.version === null) // nulliness ok here
                     select_node(event.node);
+                else if(event.node.version === current_.version) {
+                    var tag_name = prompt("enter tag name");
+                    if(tag_name) {
+                        alert("sending the tag");
+                        rcloud.tag_notebook_version(event.node.version,tag_name).then(function(v){alert(v);});
+                    }
+                }
                 else
                     result.open_notebook(event.node.gistname, event.node.version || null, event.node.root, false);
             }
         }
-        else
+        else {
             $tree_.tree('toggle', event.node);
+        }
         return false;
     }
     function tree_open(event) {
