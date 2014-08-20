@@ -20,13 +20,25 @@
   </head>
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div style="vertical-align: top;background: #000000;margin-top: -50px;padding:0px; height:70px;">
+    <h3 style="color: #ffffff;float:left">RCloud</h3>
+    <h3 style="color: #ffffff;float:left">
+        <button id="edit-notebook" title="Edit Notebook" type="button" class="btn navbar-btn"><i class="icon-edit"></i></button>
+        <button id="run-notebook" title="Run All" type="button" class="btn navbar-btn"><i class="icon-play"></i></button>
+        [<span id="notebook-title">Untitled</span>]
+    </h3>
+    <h3 style="color: #ffffff;float:right">
+        <button type="button" id="open-in-github" class="btn navbar-btn">Open in GitHub</button>
+        <i class="icon-check"></i>&nbsp;Show Source
+    </h3>
+</div>
+
+<!--<div class="navbar navbar-inverse navbar-fixed-top">
   <div>
-    <!--div class="container"-->
       <div class="navbar-header">
         <a class="navbar-brand" href="#">RCloud</a>
       </div>
-      <div class="nav-collapse "> <!-- why collapse not work here worx in main -->
+      <div class="nav-collapse"> &lt;!&ndash; why collapse not work here worx in main &ndash;&gt;
         <ul class="nav navbar-nav">
           <li><button id="edit-notebook" title="Edit Notebook" type="button" class="btn btn-link navbar-btn"><i class="icon-edit"></i></button></li>
           <li><button id="run-notebook" title="Run All" type="button" class="btn btn-link navbar-btn"><i class="icon-play"></i></button></li>
@@ -42,9 +54,8 @@
           </li>
         </ul>
       </div>
-    <!--/div-->
   </div>
-</div>
+</div>-->
 
 <div class="container" id="main-div">
   <div class="row">
@@ -62,10 +73,10 @@
 <script type="text/javascript"
         src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
-<script type="text/javascript">MathJax && MathJax.Hub.Config({tex2jax: {processEscapes: true,
+<!--<script type="text/javascript">MathJax && MathJax.Hub.Config({tex2jax: {processEscapes: true,
   processEnvironments: false, inlineMath: [ ['\\(','\\)'] ],
   displayMath: [ ['\\[','\\]'] ] },
   "HTML-CSS": { minScaleAdjust: 125 } });
-</script>
+</script>-->
 
 </body></html>
