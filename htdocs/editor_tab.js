@@ -560,7 +560,7 @@ var editor = function () {
             function add_hist_node(hist, insf, color) {
                 var hdat = _.clone(node);
                 var sha = hist.version.substring(0, 10);
-                hdat.label = hist.tag;
+                hdat.label = (hist.tag?hist.tag.substring(0, 10):hist.version.substring(0, 10));
                 hdat.version = hist.version;
                 hdat.last_commit = hist.committed_at;
                 hdat.id = node.id + '/' + hdat.version;
@@ -1082,8 +1082,15 @@ var editor = function () {
                 else if(event.node.version === current_.version) {
                     var tag_name = prompt("enter tag name");
                     if(tag_name) {
-                        alert("sending the tag");
-                        rcloud.tag_notebook_version(event.node.version,tag_name).then(function(v){alert(v);});
+                        for(var i=0;i<histories_[event.node.parent.gistname].length;i++) {
+                            if (histories_[event.node.parent.gistname][i].version === event.node.version) {
+                                histories_[event.node.parent.gistname][i].tag = tag_name;
+                            }
+                        }
+                        rcloud.tag_notebook_version(event.node.version,tag_name)
+                            .then(result.show_history(event.node.parent, true))
+                            .then(function(v){$(event.node.element).text(tag_name)})
+                            .then(result.open_notebook(event.node.gistname, event.node.version || null, event.node.root, false));
                     }
                 }
                 else
