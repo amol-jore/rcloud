@@ -23,6 +23,9 @@ RCloud.UI.init = function() {
     $("#import-notebooks").click(function() {
         shell.import_notebooks();
     });
+    $("#slide-show-notebooks").click(function() {
+        shell.slide_show_notebooks();
+    });
     var saveb = $("#save-notebook");
     saveb.click(function() {
         shell.save_notebook();

@@ -444,6 +444,56 @@ var shell = (function() {
             }).then(function() {
                 RCloud.UI.command_prompt.focus();
             });
+        },
+
+
+
+        slide_show_notebooks: function() {
+            var files = shell.notebook.controller.current_gist().files;
+            var attributes = files["r_attributes"]["names"];
+            cnt = 1;
+            function do_show() {
+                if(cnt<attributes.length-2) {
+                    var promise = rcloud.authenticated_cell_eval(files[attributes[cnt]].content, files[attributes[cnt]].language, false);
+                    promise.then(function(v){$("#slide-show-body").html(v);});
+                    cnt++;
+                }
+                else
+                    dialog.modal('hide');
+            }
+            function create_slide_show_notebook_dialog() {
+                var body = $('<div id="slide-show-body" class="container" style="margin:1%;width: 90%;height: 70%;overflow: auto"/>').append(
+                    $([attributes[0].content].join('')));
+
+                var cancel = $('<span class="btn">Cancel</span>')
+                    .on('click', function() { $(dialog).modal('hide'); });
+                var go = $('<span class="btn btn-primary">Next</span>')
+                    .on('click', do_show);
+                var footer = $('<div class="modal-footer"></div>')
+                    .append(cancel).append(go);
+                var header = $(['<div class="modal-header">',
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>',
+                    '<h3>'+gistname_+'</h3>',
+                    '</div>'].join(''));
+                var dialog = $('<div id="slide-show-notebooks-dialog" class="modal fade"></div>')
+                    .append($('<div class="col-md-12 col-sm-12"></div>')
+                        .append($('<div class="modal-content" style="margin:2%;width: 90%;height: 90%;"></div>')
+                            .append(header).append(body).append(footer)));
+                $("body").append(dialog);
+
+                dialog
+                    .on('show.bs.modal', function() {
+                        $('#import-gists').val('');
+                    })
+                    .on('shown.bs.modal', function() {
+                        $('#import-source').focus().select();
+                    });
+                return dialog;
+            }
+            var dialog = $("#slide-show-notebooks-dialog");
+            if(!dialog.length)
+                dialog = create_slide_show_notebook_dialog();
+            dialog.modal({keyboard: true});
         }
     };
 
