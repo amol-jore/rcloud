@@ -24,14 +24,16 @@ Notebook.Asset.create_html_view = function(asset_model)
         if (found){
             var yn = confirm("Asset with name "+new_asset_name+" already exists do you want to replace?");
             if(yn) {
-                asset_model.controller.remove(true);
-                found.controller.remove(true);
-                shell.notebook.controller
-                    .append_asset(old_asset_content, new_asset_name)
-                    .then(function (controller) {
-                        controller.select();
-                    });
-
+                Promise.cast(function(){found.controller.remove(true);})
+                    .then(shell.notebook.controller
+                        .append_asset(old_asset_content, new_asset_name)
+                        .then(function (controller) {
+                            controller.select();
+                        })
+                        .then(function(v){
+                            asset_model.controller.remove(true);
+                        })
+                );
             } else {
                 filename_span.text(asset_old_name);
                 found.controller.select();
