@@ -20,42 +20,32 @@
   </head>
 <body>
 
-<div style="vertical-align: top;background: #000000;margin-top: -50px;padding:0px; height:70px;">
-    <h3 style="color: #ffffff;float:left">RCloud</h3>
-    <h3 style="color: #ffffff;float:left">
-        <button id="edit-notebook" title="Edit Notebook" type="button" class="btn navbar-btn"><i class="icon-edit"></i></button>
-        <button id="run-notebook" title="Run All" type="button" class="btn navbar-btn"><i class="icon-play"></i></button>
-        [<span id="notebook-title">Untitled</span>]
-    </h3>
-    <h3 style="color: #ffffff;float:right">
-        <button type="button" id="open-in-github" class="btn navbar-btn">Open in GitHub</button>
-        <i class="icon-check"></i>&nbsp;Show Source
-    </h3>
-</div>
-
-<!--<div class="navbar navbar-inverse navbar-fixed-top">
-  <div>
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">RCloud</a>
-      </div>
-      <div class="nav-collapse"> &lt;!&ndash; why collapse not work here worx in main &ndash;&gt;
-        <ul class="nav navbar-nav">
-          <li><button id="edit-notebook" title="Edit Notebook" type="button" class="btn btn-link navbar-btn"><i class="icon-edit"></i></button></li>
-          <li><button id="run-notebook" title="Run All" type="button" class="btn btn-link navbar-btn"><i class="icon-play"></i></button></li>
-          <li><a href="#" class="unclickable">[<span id="notebook-title">Untitled</span>]</a></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Advanced <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="#" id="open-in-github">Open in GitHub</a></li>
-              <li><a href="#" id="show-source"><i class="icon-check"></i>&nbsp;Show Source</a></li>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">RCloud</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><button id="edit-notebook" title="Edit Notebook" type="button" class="btn btn-link navbar-btn"><i class="icon-edit"></i></button></li>
+                <li><button id="run-notebook" title="Run All" type="button" class="btn btn-link navbar-btn"><i class="icon-play"></i></button></li>
+                <li><a href="#" class="unclickable">[<span id="notebook-title">Untitled</span>]</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Advanced<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" id="open-in-github">Open in GitHub</a></li>
+                        <li><a href="#" id="show-source"><i class="icon-check"></i>&nbsp;Show Source</a></li>
+                    </ul>
+                </li>
             </ul>
-          </li>
-        </ul>
-      </div>
-  </div>
-</div>-->
+        </div>
+    </div>
+</div>
 
 <div class="container" id="main-div">
   <div class="row">
