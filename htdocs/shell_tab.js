@@ -458,17 +458,21 @@ var shell = (function() {
                     promise.then(function(v){$("#slide-show-body").html(v);});
                     cnt++;
                 }
-                else
+                else {
                     dialog.modal('hide');
+                    $("body").remove(dialog);
+                    $(dialog).html("");
+                    alert("removed");
+                }
             }
             function create_slide_show_notebook_dialog() {
-                var body = $('<div id="slide-show-body" class="container" style="margin:1%;width: 90%;height: 70%;overflow: auto"/>').append(
-                    $([attributes[0].content].join('')));
+                var body = $('<div id="slide-show-body" class="container" style="margin:1%;width: 95%;height: 70%;overflow: auto"/>')
+                    .append($([attributes[0].content].join('')));
 
                 var cancel = $('<span class="btn">Cancel</span>')
                     .on('click', function() { $(dialog).modal('hide'); });
                 var go = $('<span class="btn btn-primary">Next</span>')
-                    .on('click', do_show);
+                    .on('click', function(e){do_show();var myVar = setInterval(function(){do_show()}, 5000);});
                 var footer = $('<div class="modal-footer"></div>')
                     .append(cancel).append(go);
                 var header = $(['<div class="modal-header">',
@@ -477,7 +481,7 @@ var shell = (function() {
                     '</div>'].join(''));
                 var dialog = $('<div id="slide-show-notebooks-dialog" class="modal fade"></div>')
                     .append($('<div class="col-md-12 col-sm-12"></div>')
-                        .append($('<div class="modal-content" style="margin:2%;width: 90%;height: 90%;"></div>')
+                        .append($('<div class="modal-content" style="margin:2%;width: 95%;height: 90%;"></div>')
                             .append(header).append(body).append(footer)));
                 $("body").append(dialog);
 
