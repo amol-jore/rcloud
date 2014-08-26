@@ -531,12 +531,10 @@ rcloud.get.notebook.info <- function(id) {
 rcloud.get.multiple.notebook.infos <- function(ids) {
   result <- lapply(ids, rcloud.get.notebook.info)
   names(result) <- ids
-  write(toJSON(result),"/vagrant/work/temp/result.txt")
   result
 }
 
 rcloud.set.notebook.info <- function(id, info) {
-  write(toJSON(info),paste0("/vagrant/work/temp/info",id,".txt"))
   base <- usr.key(user=".notebook", notebook=id)
   rcs.set(rcs.key(base, "username"), info$username)
   rcs.set(rcs.key(base, "description"), info$description)
