@@ -1053,15 +1053,10 @@ var editor = function () {
             $li.hover(
                 function() {
                     var notebook_info = get_notebook_info(node.gistname);
-                    //alert(JSON.stringify(notebook_info));
                     if(notebook_info.parent_notebook) {
-                        console.log("-----------------");
-                        console.log("notebook_info.parent_notebook != node.gistname :: " + notebook_info.parent_notebook +" : "+ node.gistname);
                         if(notebook_info.parent_notebook != node.gistname) {
                             try {
                                 var parent_notebook_info = get_notebook_info(notebook_info.parent_notebook);
-                                console.log("parent_notebook_info.description :: "+parent_notebook_info.description);
-                                console.log("-----------------");
                                 if (parent_notebook_info.description) {
                                     $li.attr("title", "notebook forked from : " + parent_notebook_info.description);
                                 }
