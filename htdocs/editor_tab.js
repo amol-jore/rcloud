@@ -1328,7 +1328,6 @@ var editor = function () {
             set_visibility(forkedgistname, visible);
             var info = get_notebook_info(forkedgistname);
             info['parent_notebook'] = gistname;
-            alert(JSON.stringify(info));
             update_notebook_view(username_, forkedgistname, info, false);
         },
         fork_notebook: function(is_mine, gistname, version) {
