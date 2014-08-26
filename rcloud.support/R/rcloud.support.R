@@ -22,7 +22,20 @@ rcloud.load.notebook <- function(id, version = NULL) {
     .session$current.notebook <- res
     rcloud.reset.session()
   }
+  for(i in 1:length(res$content$history)) {
+    res$content$history[[i]]$tag <- res$content$history[[i]]$version;
+    tryCatch({
+      if (!is.na(rcs.get(res$content$history[[i]]$version))) {
+        res$content$history[[i]]$tag <- rcs.get(res$content$history[[i]]$version);
+      }
+    },
+    error = function(e){})
+  }
   res
+}
+
+rcloud.tag.notebook.version <- function(version,tag_name) {
+  rcs.set(version,tag_name)
 }
 
 rcloud.install.notebook.stylesheets <- function() {
