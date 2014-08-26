@@ -1173,7 +1173,6 @@ Notebook.Asset.create_html_view = function(asset_model)
     var asset_old_name = filename_span.text();
     var rename_file = function(v){
         var new_asset_name = filename_span.text();
-        new_asset_name = new_asset_name.replace(/[^a-zA-Z ]/g, " ");
         var old_asset_content = asset_model.content();
         if (Notebook.is_part_name(new_asset_name)) {
             alert("Asset names cannot start with 'part[0-9]', sorry!");
@@ -1186,14 +1185,11 @@ Notebook.Asset.create_html_view = function(asset_model)
             found.controller.select();
         }
         else {
-            console.log(new_asset_name);
-            file_x = new_asset_name;//"p  p  p.R";//prompt("Choose a filename");
             shell.notebook.controller
-            .append_asset(old_asset_content, file_x/*new_asset_name*/)
+            .append_asset(old_asset_content, new_asset_name)
             .then(function (controller) {
                 controller.select();
             });
-            //$("#new-asset > a").click();
             asset_model.controller.remove(true);
         }
     };
