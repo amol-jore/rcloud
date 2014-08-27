@@ -445,41 +445,47 @@ var shell = (function() {
                 RCloud.UI.command_prompt.focus();
             });
         },
-
-
-
         slide_show_notebooks: function() {
+            var desc = shell.notebook.controller.current_gist().description;
             var files = shell.notebook.controller.current_gist().files;
             var attributes = files["r_attributes"]["names"];
             cnt = 1;
             function do_show() {
-                if(cnt<attributes.length-2) {
+                $("#slide-show-body").html("");
+                if(cnt<attributes.length) {
                     var promise = rcloud.authenticated_cell_eval(files[attributes[cnt]].content, files[attributes[cnt]].language, false);
-                    promise.then(function(v){$("#slide-show-body").html(v);});
-                    cnt++;
+                    promise.then(function(v){
+                        $("#slide-show-body").html(v);
+                        $("#slide-name").html(files[attributes[cnt]].filename);
+                        $("#slide-lang").html(files[attributes[cnt]].language);
+                        cnt++;
+                    });
                 }
                 else {
                     dialog.modal('hide');
                     $("body").remove(dialog);
                     $(dialog).html("");
-                    alert("removed");
+                    clearInterval(interval);
                 }
             }
+            var interval = "";
             function create_slide_show_notebook_dialog() {
-                var body = $('<div id="slide-show-body" class="container" style="margin:1%;width: 95%;height: 70%;overflow: auto"/>')
+                var body = $('<div id="slide-show-body" class="container" style="border-radius:0px; margin:1%;width: 95%;height: 70%;overflow: auto"/>')
                     .append($([attributes[0].content].join('')));
 
                 var cancel = $('<span class="btn">Cancel</span>')
                     .on('click', function() { $(dialog).modal('hide'); });
                 var go = $('<span class="btn btn-primary">Next</span>')
-                    .on('click', function(e){do_show();var myVar = setInterval(function(){do_show()}, 5000);});
-                var footer = $('<div class="modal-footer"></div>')
+                    .on('click', function(e){do_show();interval = setInterval(function(){do_show()}, 8000);});
+                var footer = $('<div class="modal-footer" style="background: #363636"></div>')
                     .append(cancel).append(go);
-                var header = $(['<div class="modal-header">',
+                var header = $(['<div class="modal-header" style="background: #2b81af;height: 14%">',
                     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>',
-                    '<h3>'+gistname_+'</h3>',
+                    '<div id="slide-desc" style="color: #ffffff; float: left; font-size: 24px">'+desc+'</div>',
+                    '<div id="slide-name" style="color: #ffffff;float: right;padding:20px"></div>',
+                    '<div id="slide-lang" style="color: #ffffff; float: right;padding:10px"></div>',
                     '</div>'].join(''));
-                var dialog = $('<div id="slide-show-notebooks-dialog" class="modal fade"></div>')
+                var dialog = $('<div id="slide-show-notebooks-dialog" class="modal fade" style="border:1px solid white;"></div>')
                     .append($('<div class="col-md-12 col-sm-12"></div>')
                         .append($('<div class="modal-content" style="margin:2%;width: 95%;height: 90%;"></div>')
                             .append(header).append(body).append(footer)));
