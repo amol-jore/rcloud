@@ -560,7 +560,7 @@ var editor = function () {
             function add_hist_node(hist, insf, color) {
                 var hdat = _.clone(node);
                 var sha = hist.version.substring(0, 10);
-                hdat.label = (hist.tag?hist.tag.substring(0, 10):hist.version.substring(0, 10));
+                hdat.label = (hist.tag ? hist.tag.substring(0, 10) : hist.version.substring(0, 10));
                 hdat.version = hist.version;
                 hdat.last_commit = hist.committed_at;
                 hdat.id = node.id + '/' + hdat.version;
@@ -1071,13 +1071,13 @@ var editor = function () {
                 // it's weird that a notebook exists in two trees but only one is selected (#220)
                 // just select - and this enables editability
                 if(event.node.gistname === current_.notebook &&
-                   event.node.version == current_.version &&
+                   event.node.version === current_.version &&
                     event.node.version === null ) // nulliness ok here
                     select_node(event.node);
                 else if(event.node.version === current_.version) {
                     var tag_name = prompt("enter tag name");
                     if(tag_name) {
-                        for(var i=0;i<histories_[event.node.parent.gistname].length;i++) {
+                        for(var i=0 ; i<histories_[event.node.parent.gistname].length ; i++) {
                             if (histories_[event.node.parent.gistname][i].version === event.node.version) {
                                 histories_[event.node.parent.gistname][i].tag = tag_name;
                             }
