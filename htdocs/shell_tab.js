@@ -450,15 +450,15 @@ var shell = (function() {
             var files = shell.notebook.controller.current_gist().files;
             var attributes = files["r_attributes"]["names"];
             cnt = 1;
-            function do_show() {
+            function do_show(delta) {
                 $("#slide-show-body").html("");
-                if(cnt<attributes.length) {
+                if(cnt<attributes.length && cnt >= 0) {
                     var promise = rcloud.authenticated_cell_eval(files[attributes[cnt]].content, files[attributes[cnt]].language, false);
                     promise.then(function(v){
                         $("#slide-show-body").html(v);
                         $("#slide-name").html(files[attributes[cnt]].filename);
                         $("#slide-lang").html(files[attributes[cnt]].language);
-                        cnt++;
+                        cnt=cnt+delta;
                     });
                 }
                 else {
@@ -475,10 +475,12 @@ var shell = (function() {
 
                 var cancel = $('<span class="btn">Cancel</span>')
                     .on('click', function() { $(dialog).modal('hide'); });
-                var go = $('<span class="btn btn-primary">Next</span>')
-                    .on('click', function(e){do_show();interval = setInterval(function(){do_show()}, 8000);});
+                var next = $('<span class="btn btn-primary">Next</span>')
+                    .on('click', function(e){do_show(1);/*interval = setInterval(function(){do_show(1)}, 8000);*/});
+                var prev = $('<span class="btn btn-primary">Prev</span>')
+                    .on('click', function(e){do_show(-1);/*interval = setInterval(function(){do_show(-1)}, 8000);*/});
                 var footer = $('<div class="modal-footer" style="background: #363636"></div>')
-                    .append(cancel).append(go);
+                    .append(cancel).append(prev).append(next);
                 var header = $(['<div class="modal-header" style="background: #2b81af;height: 14%">',
                     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>',
                     '<div id="slide-desc" style="color: #ffffff; float: left; font-size: 24px">'+desc+'</div>',
