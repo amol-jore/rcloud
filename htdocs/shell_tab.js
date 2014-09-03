@@ -449,36 +449,39 @@ var shell = (function() {
             var desc = shell.notebook.controller.current_gist().description;
             var files = shell.notebook.controller.current_gist().files;
             var attributes = files["r_attributes"]["names"];
-            cnt = 1;
+            var cnt = 0;
+            var dialog;
+            var interval;
             function do_show(delta) {
                 $("#slide-show-body").html("");
                 if(cnt<attributes.length && cnt >= 0) {
                     var promise = rcloud.authenticated_cell_eval(files[attributes[cnt]].content, files[attributes[cnt]].language, false);
                     promise.then(function(v){
+                        $("#slide-show-body").empty();
                         $("#slide-show-body").html(v);
                         $("#slide-name").html(files[attributes[cnt]].filename);
                         $("#slide-lang").html(files[attributes[cnt]].language);
                         cnt=cnt+delta;
-                    });
+                    }.bind(cnt));
                 }
                 else {
+                    $("#slide-show-body").empty();
+                    cnt = 0;
                     dialog.modal('hide');
                     $("body").remove(dialog);
-                    $(dialog).html("");
                     clearInterval(interval);
                 }
             }
-            var interval = "";
             function create_slide_show_notebook_dialog() {
                 var body = $('<div id="slide-show-body" class="container" style="border-radius:0px; margin:1%;width: 95%;height: 70%;overflow: auto"/>')
-                    .append($([attributes[0].content].join('')));
+                    .append($([attributes[0].content]));
 
                 var cancel = $('<span class="btn">Cancel</span>')
                     .on('click', function() { $(dialog).modal('hide'); });
                 var next = $('<span class="btn btn-primary">Next</span>')
-                    .on('click', function(e){do_show(1);/*interval = setInterval(function(){do_show(1)}, 8000);*/});
+                    .on('click', function(e){do_show(1);});
                 var prev = $('<span class="btn btn-primary">Prev</span>')
-                    .on('click', function(e){do_show(-1);/*interval = setInterval(function(){do_show(-1)}, 8000);*/});
+                    .on('click', function(e){do_show(-1);});
                 var footer = $('<div class="modal-footer" style="background: #363636"></div>')
                     .append(cancel).append(prev).append(next);
                 var header = $(['<div class="modal-header" style="background: #2b81af;height: 14%">',
@@ -487,7 +490,7 @@ var shell = (function() {
                     '<div id="slide-name" style="color: #ffffff;float: right;padding:20px"></div>',
                     '<div id="slide-lang" style="color: #ffffff; float: right;padding:10px"></div>',
                     '</div>'].join(''));
-                var dialog = $('<div id="slide-show-notebooks-dialog" class="modal fade" style="border:1px solid white;"></div>')
+                dialog = $('<div id="slide-show-notebooks-dialog" class="modal fade" style="border:1px solid white;"></div>')
                     .append($('<div class="col-md-12 col-sm-12"></div>')
                         .append($('<div class="modal-content" style="margin:2%;width: 95%;height: 90%;"></div>')
                             .append(header).append(body).append(footer)));
@@ -503,8 +506,11 @@ var shell = (function() {
                 return dialog;
             }
             var dialog = $("#slide-show-notebooks-dialog");
-            if(!dialog.length)
+            if(!dialog.length) {
                 dialog = create_slide_show_notebook_dialog();
+                do_show(1);
+                interval = setInterval(function(){do_show(1)}, 5000);
+            }
             dialog.modal({keyboard: true});
         }
     };
