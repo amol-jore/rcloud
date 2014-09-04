@@ -453,7 +453,6 @@ var shell = (function() {
             var dialog;
             var interval;
             function do_show(delta) {
-                $("#slide-show-body").html("");
                 if(cnt<attributes.length && cnt >= 0) {
                     var promise = rcloud.authenticated_cell_eval(files[attributes[cnt]].content, files[attributes[cnt]].language, false);
                     promise.then(function(v){
@@ -465,17 +464,16 @@ var shell = (function() {
                     }.bind(cnt));
                 }
                 else {
+                    clearInterval(interval);
                     $("#slide-show-body").empty();
                     cnt = 0;
                     dialog.modal('hide');
                     $("body").remove(dialog);
-                    clearInterval(interval);
                 }
             }
             function create_slide_show_notebook_dialog() {
                 var body = $('<div id="slide-show-body" class="container" style="border-radius:0px; margin:1%;width: 95%;height: 70%;overflow: auto"/>')
-                    .append($([attributes[0].content]));
-
+                    .append($([attributes[cnt].content]));
                 var cancel = $('<span class="btn">Cancel</span>')
                     .on('click', function() { $(dialog).modal('hide'); });
                 var next = $('<span class="btn btn-primary">Next</span>')
