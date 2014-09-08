@@ -19,7 +19,7 @@ rcloud.get.comments <- function(id)
 
   ## send the update request
   curlTemplate <- paste0(url,"/update/json?commit=true")
-  metadata <- paste0('{"id":"', id, '","comments":{"', method, '":"', paste0('{\'id\':\'',comment.id,'\',\'content\':\'',comment.content,'\',\'user\':\'',.session$rgithub.context$user$login,'\'}'),'"}}')
+  metadata <- paste0('{"id":"', id, '","comments":{"', method, '":"', paste0('{\'id\':\'',comment.id,'\',\'content\':\'',comment.content,'\',\'user\':\'',.session$username,'\'}'),'"}}')
   postForm(curlTemplate, .opts = list(
                            postfields = paste0("[",metadata,"]"),
                            httpheader = c('Content-Type' = 'application/json',Accept = 'application/json')))
@@ -37,7 +37,7 @@ rcloud.post.comment <- function(id, content)
   solr.url <- URLencode(paste0(url, "/select?q=id:",id,"&start=0&rows=1000&fl=comments&wt=json"))
   solr.res <- fromJSON(getURL(solr.url,.encoding = 'utf-8',.mapUnicode=FALSE))
   index <- grep(cid, solr.res$response$docs[[1]]$comments)
-  solr.res$response$docs[[1]]$comments[[index]] <- paste0('{\'id\':\'',cid,'\',\'content\':\'',fromJSON(content)$body,'\',\'user\':\'',.session$rgithub.context$user$login,'\'}')
+  solr.res$response$docs[[1]]$comments[[index]] <- paste0('{\'id\':\'',cid,'\',\'content\':\'',fromJSON(content)$body,'\',\'user\':\'',.session$username,'\'}')
   curlTemplate <- paste0(url,"/update/json?commit=true")
   metadata <- paste0('{"id":"',id,'","comments":{"set":[\"',paste(solr.res$response$docs[[1]]$comments, collapse="\",\""),'\"]}}')
   postForm(curlTemplate, .opts = list(
@@ -47,8 +47,8 @@ rcloud.post.comment <- function(id, content)
 
 rcloud.modify.comment <- function(id, cid, content)
 {
-  res <- modify.gist.comment(id,cid,content, ctx = .session$gist.context)
   mcparallel(.solr.modify.comment(id, content, cid), detached=TRUE)
+  res <- modify.gist.comment(id,cid,content, ctx = .session$gist.context)
   res$ok
 }
 
@@ -60,7 +60,6 @@ rcloud.modify.comment <- function(id, cid, content)
   solr.res$response$docs[[1]]$comments <- solr.res$response$docs[[1]]$comments[-index]
   curlTemplate <- paste0(url,"/update/json?commit=true")
   metadata <- paste0('{"id":"',id,'","comments":{"set":[\"',paste(solr.res$response$docs[[1]]$comments, collapse="\",\""),'\"]}}')
-  write(metadata, "/vagrant/work/debug/deletec")
   postForm(curlTemplate, .opts = list(
                            postfields = paste0("[",metadata,"]"),
                            httpheader = c('Content-Type' = 'application/json',Accept = 'application/json')))
