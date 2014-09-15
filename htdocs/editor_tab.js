@@ -229,7 +229,8 @@ var editor = function () {
                 visible: attrs.visible,
                 last_commit: attrs.last_commit || 'none',
                 id: node_id(root, username, name),
-                sort_order: ordering.NOTEBOOK
+                sort_order: ordering.NOTEBOOK,
+                fork_of:attrs.fork_of
             };
             notebook_nodes.push(result);
         }
@@ -1040,6 +1041,12 @@ var editor = function () {
             always[0].appendChild(appear[0]);
             $li.hover(
                 function() {
+                    var notebook_info = get_notebook_info(node.gistname);
+                    var parent_info = node.fork_of;
+                    if(parent_info) {
+                        $li.attr("title", "notebook forked from : " + parent_info.description + " [" + parent_info.owner.login + "]");
+
+                    }
                     $('.notebook-commands.appear', this).show();
                 },
                 function() {
@@ -1183,7 +1190,6 @@ var editor = function () {
         },
         create_book_tree_widget: function(data) {
             var that = this;
-
             $tree_ = $("#editor-book-tree");
             $tree_.tree({
                 data: data,
