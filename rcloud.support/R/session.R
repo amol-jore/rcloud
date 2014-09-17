@@ -26,6 +26,7 @@ rcloud.unauthenticated.session.cell.eval <- function(partname, language, silent)
 }
 
 rcloud.session.cell.eval <- function(partname, language, silent) {
+  ulog("RCloud rcloud.session.cell.eval(", partname, ",", language,")")
   command <- rcloud.get.gist.part(partname)
   if (language == "R" || language == "Markdown") {
     session.markdown.eval(command, language, silent)
@@ -73,14 +74,6 @@ session.python.eval <- function(command) {
   to.chunk <- function(chunk) {
     chunk <- as.list(chunk)
     if (chunk$output_type == "pyexception") {
-      cat("BEGIN\n", file="/tmp/python_rcloud.log", append=TRUE)
-      cat(chunk$text, file="/tmp/python_rcloud.log", append=TRUE)
-      cat("\n", file="/tmp/python_rcloud.log", append=TRUE)
-      cat(html.escape(chunk$text), file="/tmp/python_rcloud.log", append=TRUE)
-      cat("\n", file="/tmp/python_rcloud.log", append=TRUE)
-      cat(vt100.translate(html.escape(chunk$text)), file="/tmp/python_rcloud.log", append=TRUE)
-      cat("\n", file="/tmp/python_rcloud.log", append=TRUE)
-      cat("END\n", file="/tmp/python_rcloud.log", append=TRUE)
       paste("<pre>", vt100.translate(html.escape(chunk$text)), "</pre>", sep='')
     } else if (chunk$output_type == "pyout") {
       paste("\n    ", chunk$text, sep='')
@@ -119,15 +112,6 @@ session.markdown.eval <- function(command, language, silent) {
     paste("<pre>", val[1], "</pre>", sep="")
   } else {
     val
-  }
-}
-
-## FIXME: won't work, global file!
-session.log <- function(user, v) {
-  vs <- strsplit(v, "\n")
-  for (i in 1:length(vs[[1]])) {
-    cat(paste(paste(Sys.time(), user, vs[[1]][i], sep="|"),"\n"),
-        file=pathConf("data.root", "history", "main_log.txt"), append=TRUE)
   }
 }
 
