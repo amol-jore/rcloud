@@ -446,22 +446,35 @@ var shell = (function() {
             });
         },
         slide_show_notebooks: function() {
+            var executed_cells = [];
             var desc = shell.notebook.controller.current_gist().description;
             var files = shell.notebook.controller.current_gist().files;
             var attributes = files["r_attributes"]["names"];
             var cnt = 0;
             var dialog;
             var interval;
+            var elements= $('.r-result-div','#output');
+            var cell_cnt = 0;
+            for(var i=0;i<elements.length;i++) {
+                var output_cell = $(elements[i]).children();
+                if(output_cell.length > 1) {
+                    executed_cells[cell_cnt] = output_cell[1];
+                    cell_cnt++;
+                }
+            }
             function do_show(delta) {
-                if(cnt<attributes.length && cnt >= 0) {
-                    var promise = rcloud.authenticated_cell_eval(files[attributes[cnt]].content, files[attributes[cnt]].language, false);
-                    promise.then(function(v){
+                if(cnt<executed_cells.length && cnt >= 0) {
+                    if(true) {
                         $("#slide-show-body").empty();
-                        $("#slide-show-body").html(v);
+                        $("#slide-show-body").html($(executed_cells[cnt]).html());
+                        cnt = cnt + delta;
+                    } else {
+                        $("#slide-show-body").empty();
+                        $("#slide-show-body").html(files[attributes[cnt]].content);
                         $("#slide-name").html(files[attributes[cnt]].filename);
                         $("#slide-lang").html(files[attributes[cnt]].language);
-                        cnt=cnt+delta;
-                    }.bind(cnt));
+                        cnt = cnt + delta;
+                    }
                 }
                 else {
                     clearInterval(interval);
@@ -507,7 +520,7 @@ var shell = (function() {
             if(!dialog.length) {
                 dialog = create_slide_show_notebook_dialog();
                 do_show(1);
-                interval = setInterval(function(){do_show(1)}, 5000);
+                cnt = 0;
             }
             dialog.modal({keyboard: true});
         }
