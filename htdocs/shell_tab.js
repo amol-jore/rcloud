@@ -446,7 +446,6 @@ var shell = (function() {
             });
         },
         slide_show_notebooks: function() {
-            var executed_cells = [];
             var desc = shell.notebook.controller.current_gist().description;
             var files = shell.notebook.controller.current_gist().files;
             var attributes = files["r_attributes"]["names"];
@@ -454,8 +453,9 @@ var shell = (function() {
             var dialog;
             var interval;
             var elements= $('.r-result-div','#output');
-            var cell_cnt = 0;
-            for(var i=0;i<elements.length;i++) {
+            executed_cells = [];
+            cell_cnt = 0;
+            for(var i=0 ; i < elements.length;i++) {
                 var output_cell = $(elements[i]).children();
                 if(output_cell.length > 1) {
                     executed_cells[cell_cnt] = output_cell[1];
@@ -463,30 +463,19 @@ var shell = (function() {
                 }
             }
             function do_show(delta) {
-                if(cnt<executed_cells.length && cnt >= 0) {
-                    if(true) {
-                        $("#slide-show-body").empty();
-                        $("#slide-show-body").html($(executed_cells[cnt]).html());
-                        cnt = cnt + delta;
-                    } else {
-                        $("#slide-show-body").empty();
-                        $("#slide-show-body").html(files[attributes[cnt]].content);
-                        $("#slide-name").html(files[attributes[cnt]].filename);
-                        $("#slide-lang").html(files[attributes[cnt]].language);
-                        cnt = cnt + delta;
-                    }
+                if(cnt < cell_cnt && cnt >= 0) {
+                    cnt = cnt + delta;
+                    $("#slide-show-body").empty();
+                    $("#slide-show-body").html($(executed_cells[cnt]).html());
                 }
                 else {
-                    clearInterval(interval);
-                    $("#slide-show-body").empty();
                     cnt = 0;
                     dialog.modal('hide');
-                    $("body").remove(dialog);
                 }
             }
             function create_slide_show_notebook_dialog() {
-                var body = $('<div id="slide-show-body" class="container" style="border-radius:0px; margin:1%;width: 95%;height: 70%;overflow: auto"/>')
-                    .append($([attributes[cnt].content]));
+                var body = $('<div id="slide-show-body" class="container" style="border-radius:0px; margin:1%;width: 95%;height: 70%;overflow: auto"/>');
+
                 var cancel = $('<span class="btn">Cancel</span>')
                     .on('click', function() { $(dialog).modal('hide'); });
                 var next = $('<span class="btn btn-primary">Next</span>')
@@ -505,7 +494,6 @@ var shell = (function() {
                     .append($('<div class="col-md-12 col-sm-12"></div>')
                         .append($('<div class="modal-content" style="margin:2%;width: 95%;height: 90%;"></div>')
                             .append(header).append(body).append(footer)));
-                $("body").append(dialog);
 
                 dialog
                     .on('show.bs.modal', function() {
@@ -519,9 +507,10 @@ var shell = (function() {
             var dialog = $("#slide-show-notebooks-dialog");
             if(!dialog.length) {
                 dialog = create_slide_show_notebook_dialog();
-                do_show(1);
-                cnt = 0;
+                $("body").append(dialog);
             }
+            cnt = 0;
+            do_show(0);
             dialog.modal({keyboard: true});
         }
     };
