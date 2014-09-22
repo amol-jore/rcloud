@@ -474,25 +474,24 @@ var shell = (function() {
                 }
             }
             function create_slide_show_notebook_dialog() {
-                var body = $('<div id="slide-show-body" class="container" style="border-radius:0px; margin:1%;width: 95%;height: 70%;overflow: auto"/>');
-
+                var body = $('<div id="slide-show-body" class="container slide-show-popup-body">');
                 var cancel = $('<span class="btn">Cancel</span>')
                     .on('click', function() { $(dialog).modal('hide'); });
                 var next = $('<span class="btn btn-primary">Next</span>')
                     .on('click', function(e){do_show(1);});
                 var prev = $('<span class="btn btn-primary">Prev</span>')
                     .on('click', function(e){do_show(-1);});
-                var footer = $('<div class="modal-footer" style="background: #363636"></div>')
+                var footer = $('<div class="modal-footer slide-show-popup-footer"></div>')
                     .append(cancel).append(prev).append(next);
-                var header = $(['<div class="modal-header" style="background: #2b81af;height: 14%">',
+                var header = $(['<div class="modal-header slide-show-popup-header">',
                     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>',
-                        '<div id="slide-desc" style="color: #ffffff; float: left; font-size: 24px">'+desc+'</div>',
-                    '<div id="slide-name" style="color: #ffffff;float: right;padding:20px"></div>',
-                    '<div id="slide-lang" style="color: #ffffff; float: right;padding:10px"></div>',
+                    '<div id="slide-desc" style="float: left;">'+desc+'</div>',
+                    '<div id="slide-name" style="float: right;"></div>',
+                    '<div id="slide-lang" style="float: right;"></div>',
                     '</div>'].join(''));
-                dialog = $('<div id="slide-show-notebooks-dialog" class="modal fade" style="border:1px solid white;"></div>')
+                dialog = $('<div id="slide-show-notebooks-dialog" class="modal fade"></div>')
                     .append($('<div class="col-md-12 col-sm-12"></div>')
-                        .append($('<div class="modal-content" style="margin:2%;width: 95%;height: 90%;"></div>')
+                        .append($('<div class="modal-content slide-show-popup"></div>')
                             .append(header).append(body).append(footer)));
 
                 dialog
