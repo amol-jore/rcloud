@@ -536,7 +536,7 @@ var editor = function () {
     // add_history_nodes
     // whither is 'hide' - erase all, 'index' - show thru index, 'sha' - show thru sha, 'more' - show INCR more
     function add_history_nodes(node, whither, where) {
-        var INCR = 5;
+        var INCR = 3;
         var debug_colors = false;
         var ellipsis = null;
         if(node.children.length && node.children[node.children.length-1].id == 'showmore')
@@ -557,12 +557,15 @@ var editor = function () {
                 if(debug_colors)
                     dat.color = color;
             }
-            function add_hist_node(hist, insf, color) {
+            function add_hist_node(hist, insf, color,i) {
                 var hdat = _.clone(node);
                 var sha = hist.version.substring(0, 10);
+                var www='none';
+                if(i+1 < history.length)
+                    www = get_date_diff(hist.committed_at,history[i+1].committed_at);
                 hdat.label = sha;
                 hdat.version = hist.version;
-                hdat.last_commit = hist.committed_at;
+                hdat.last_commit = (www ? hist.committed_at : 'none');//hist.committed_at;
                 hdat.id = node.id + '/' + hdat.version;
                 do_color(hdat, color);
                 var nn = insf(hdat);
@@ -589,7 +592,7 @@ var editor = function () {
                 insf = function(dat) { return $tree_.tree('appendNode', dat, node); };
             }
             for(var i=0; i<nins; ++i)
-                add_hist_node(history[i], insf, 'green');
+                add_hist_node(history[i], insf, 'green',i);
 
             var count = curr_count();
             if(count < nshow) { // top up
@@ -598,7 +601,7 @@ var editor = function () {
                 else
                     insf = function(dat) { return $tree_.tree('appendNode', dat, node); };
                 for(i=count; i<nshow; ++i)
-                    add_hist_node(history[i], insf, 'mediumpurple');
+                    add_hist_node(history[i], insf, 'mediumpurple',i);
             }
             else if(count > nshow) // trim any excess
                 for(i=count-1; i>=nshow; --i)
@@ -612,8 +615,9 @@ var editor = function () {
             else {
                 if(nshow < history.length) {
                     var data = {
-                        label: '...',
-                        id: 'showmore'
+                        label: '......',
+                        id: 'showmore',
+                        last_commit : history[history.length-count].committed_at //node.last_commit
                     };
                     $tree_.tree('appendNode', data, node);
                 }
@@ -838,6 +842,16 @@ var editor = function () {
             return date.getHours() + ':' + pad(date.getMinutes());
         else
             return (date.getMonth()+1) + '/' + date.getDate();
+    }
+
+    function get_date_diff(d1,d2) {
+        function pad(n) { return n<10 ? '0'+n : n; }
+        var diff = new Date(d1) - new Date(d2);
+        console.log(diff);
+        if(diff < 60*1000)
+            return false;
+        else
+            return true;
     }
 
     function populate_comments(comments) {
