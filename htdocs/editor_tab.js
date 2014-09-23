@@ -846,9 +846,13 @@ var editor = function () {
 
     function get_date_diff(d1,d2) {
         function pad(n) { return n<10 ? '0'+n : n; }
-        var diff = new Date(d1) - new Date(d2);
+        d1 = new Date(d1);
+        d2 = new Date(d2);
+        var diff = d1 - d2;
         console.log(diff);
-        if(diff < 60*1000)
+        if(diff <= 60*1000)
+            return false;
+        else if(diff < 24*60*60*1000 && d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth())
             return false;
         else
             return true;
