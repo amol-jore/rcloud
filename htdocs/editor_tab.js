@@ -536,7 +536,7 @@ var editor = function () {
     // add_history_nodes
     // whither is 'hide' - erase all, 'index' - show thru index, 'sha' - show thru sha, 'more' - show INCR more
     function add_history_nodes(node, whither, where) {
-        var INCR = 3;
+        var INCR = 5;
         var debug_colors = false;
         var ellipsis = null;
         if(node.children.length && node.children[node.children.length-1].id == 'showmore')
@@ -560,12 +560,12 @@ var editor = function () {
             function add_hist_node(hist, insf, color,i) {
                 var hdat = _.clone(node);
                 var sha = hist.version.substring(0, 10);
-                var www='none';
+                var d=hist.committed_at;
                 if(i+1 < history.length)
-                    www = get_date_diff(hist.committed_at,history[i+1].committed_at);
+                    d = get_date_diff(hist.committed_at,history[i+1].committed_at);
                 hdat.label = sha;
                 hdat.version = hist.version;
-                hdat.last_commit = (www ? hist.committed_at : 'none');//hist.committed_at;
+                hdat.last_commit = (d ? d/*hist.committed_at*/ : 'none');//hist.committed_at;
                 hdat.id = node.id + '/' + hdat.version;
                 do_color(hdat, color);
                 var nn = insf(hdat);
@@ -841,7 +841,7 @@ var editor = function () {
         if(diff < 24*60*60*1000)
             return date.getHours() + ':' + pad(date.getMinutes());
         else
-            return (date.getMonth()+1) + '/' + date.getDate();
+            return (date.getMonth()+1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + pad(date.getMinutes());
     }
 
     function get_date_diff(d1,d2) {
@@ -849,13 +849,16 @@ var editor = function () {
         d1 = new Date(d1);
         d2 = new Date(d2);
         var diff = d1 - d2;
-        console.log(diff);
         if(diff <= 60*1000)
-            return false;
-        else if(diff < 24*60*60*1000 && d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth())
-            return false;
+            return null;
+        else if(diff < 24*60*60*1000 && d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth()) {
+            var d = new Date(Date.now());
+            d1.setMonth(d.getMonth());
+            d1.setDate(d.getDate());
+            return d1;
+        }
         else
-            return true;
+            return d1;
     }
 
     function populate_comments(comments) {
