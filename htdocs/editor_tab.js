@@ -849,9 +849,9 @@ var editor = function () {
         d1 = new Date(d1);
         d2 = new Date(d2);
         var diff = d1 - d2;
-        if(diff <= 60*1000)
+        if(diff <= 60*1000 && d1.getHours() === d2.getHours() && d1.getMinutes() === d2.getMinutes())
             return null;
-        else if(diff < 24*60*60*1000 && d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth()) {
+        else if(diff < 24*60*60*1000 && d1.getDate() === d2.getDate() && d1.getMonth() === d2.getMonth()) {
             var d = new Date(Date.now());
             d1.setMonth(d.getMonth());
             d1.setDate(d.getDate());
