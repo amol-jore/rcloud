@@ -1,5 +1,11 @@
 RCloud.UI.notebook_title = (function() {
     var last_editable_ =  null;
+    var node_ = null;
+    //[[aj :::  added below function]]
+    function tag_current_notebook(name) {
+        editor.tag_notebook(name,node_);
+    }
+
     function rename_current_notebook(name) {
         editor.rename_notebook(name)
             .then(function() {
@@ -43,25 +49,31 @@ RCloud.UI.notebook_title = (function() {
                     text = text.substr(0, text.length - 2);
                 }
                 title.text((ellipt_start ? '.../' : '') +
-                           text +
-                           (ellipt_end ? '...' : ''));
+                    text +
+                    (ellipt_end ? '...' : ''));
             }
             ui_utils.editable(title, $.extend({allow_edit: !is_read_only,
-                                               inactive_text: title.text(),
-                                               active_text: active_text},
-                                              editable_opts));
+                    inactive_text: title.text(),
+                    active_text: active_text},
+                editable_opts));
         }, make_editable: function(node, editable) {
             function get_title(node) {
-                return $('.jqtree-title:not(.history)', node.element);
+                //return $('.jqtree-title:not(.history)', node.element);
+                return $('.jqtree-title', node.element); //[[aj ::: uncomment above line]]
             }
             if(last_editable_ && (!node || last_editable_ !== node))
                 ui_utils.editable(get_title(last_editable_), 'destroy');
             if(node) {
+                if(node.version) {
+                    node_ = node;
+                    editable_opts.change = tag_current_notebook;
+                }
                 ui_utils.editable(get_title(node),
-                                  $.extend({allow_edit: editable,
-                                            inactive_text: node.name,
-                                            active_text: node.full_name},
-                                           editable_opts));
+                    $.extend({allow_edit: editable,
+                            inactive_text: node.name,
+                            //active_text: node.full_name},
+                            active_text: node.name}, //[[aj ::: added this line, commented above]]
+                        editable_opts));
             }
             last_editable_ = node;
         }
