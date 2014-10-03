@@ -533,7 +533,6 @@ rcloud.get.notebook.info <- function(id) {
   keys <- rcs.key(base, fields)
   results <- rcs.get(keys, list=TRUE)
   names(results) <- fields
-  write(toJSON(results),"/vagrant/work/rs.txt")
   results
 }
 
@@ -548,7 +547,6 @@ rcloud.set.notebook.info <- function(id, info) {
   rcs.set(rcs.key(base, "username"), info$username)
   rcs.set(rcs.key(base, "description"), info$description)
   rcs.set(rcs.key(base, "last_commit"), info$last_commit)
-  rcs.set(rcs.key(base, "fork_of"), info$fork_of)
 }
 
 rcloud.purl.source <- function(contents)
