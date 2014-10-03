@@ -96,12 +96,13 @@ var editor = function () {
             Promise.resolve();
     }
 
-    function update_notebook_model(user, gistname, description, time) {
+    function update_notebook_model(user, gistname, description, time, fork_of) {
         var entry = get_notebook_info(gistname);
 
         entry.username = user;
         entry.description = description;
         entry.last_commit = time;
+        entry.fork_of = fork_of;
 
         add_notebook_info(user, gistname, entry);
         return entry; // note: let go of promise
@@ -797,9 +798,17 @@ var editor = function () {
         if(history)
             histories_[gistname] = history;
 
+        var fork_of = "";
+        if(result.fork_of)
+            fork_of = result.fork_of.description;
+
+        if(!fork_of)
+            fork_of = "none";
+
         var entry = update_notebook_model(user, gistname,
                                           result.description,
-                                          result.updated_at || result.history[0].committed_at);
+                                          result.updated_at || result.history[0].committed_at,
+                                          fork_of);
 
         update_notebook_view(user, gistname, entry, selroot);
     }
@@ -911,6 +920,7 @@ var editor = function () {
 
     var icon_style = {'line-height': '90%'};
     function on_create_tree_li(node, $li) {
+        var x = notebook_info_;
         var element = $li.find('.jqtree-element'),
             title = element.find('.jqtree-title');
         title.css('color', node.color);
@@ -1044,7 +1054,7 @@ var editor = function () {
                     var notebook_info = get_notebook_info(node.gistname);
                     var parent_info = node.fork_of;
                     if(parent_info) {
-                        $li.attr("title", "notebook forked from : " + parent_info + " [" + parent_info.owner.login + "]");
+                        $li.attr("title", "notebook forked from : " + parent_info);
                     }
                     $('.notebook-commands.appear', this).show();
                 },
