@@ -1044,8 +1044,7 @@ var editor = function () {
                     var notebook_info = get_notebook_info(node.gistname);
                     var parent_info = node.fork_of;
                     if(parent_info) {
-                        $li.attr("title", "notebook forked from : " + parent_info.description + " [" + parent_info.owner.login + "]");
-
+                        $li.attr("title", "notebook forked from : " + parent_info + " [" + parent_info.owner.login + "]");
                     }
                     $('.notebook-commands.appear', this).show();
                 },
