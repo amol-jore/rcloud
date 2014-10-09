@@ -561,7 +561,7 @@ var editor = function () {
                 var hdat = _.clone(node);
                 //var sha = hist.version.substring(0, 10);
                 //[[aj ::: added below line with comment]]
-                hdat.label = (hist.tag?hist.tag.substring(0, 20):hist.version.substring(0, 10));
+                hdat.label = (hist.tag?hist.tag.substring(0, 10):hist.version.substring(0, 10));
                 hdat.version = hist.version;
                 hdat.last_commit = hist.committed_at;
                 hdat.id = node.id + '/' + hdat.version;
@@ -1234,15 +1234,19 @@ var editor = function () {
         },
         tag_notebook : function(tag_string,node){
             for(var i=0;i<histories_[node.parent.gistname].length;i++) {
-                if (histories_[node.parent.gistname][i].version === node.name) {
+                if (histories_[node.parent.gistname][i].version === node.version) {
                     histories_[node.parent.gistname][i].tag = tag_string;
                 }
+                if(histories_[node.parent.gistname][i].tag === tag_string && histories_[node.parent.gistname][i].version != node.version) {
+                    histories_[node.parent.gistname][i].tag = (node.version).substring(0,10);
+                }
             }
-            alert("calling : "+node.version);
+            //histories_[node.gistname].tag = tag_string;
             rcloud.tag_notebook_version(node.version,tag_string)
+                //.then(function(v){/*$(node.element).text(tag_string)*/ histories_[node.gistname].tag = tag_string;})
                 .then(result.show_history(node.parent, true))
-                //.then(function(v){$(node.element).text(tag_string)})
-                .then(result.open_notebook(node.gistname, node.version || null, node.root, false));
+                .then(result.open_notebook(node.gistname, node.version || null, node.root, false))
+                ;
         },
         star_notebook: function(star, opts) {
             var that = this;
@@ -1342,7 +1346,8 @@ var editor = function () {
                 }
                 if(toggle) whither = 'hide';
             }
-            add_history_nodes(node, whither, null)
+            alert("### : "+histories_[node.gistname].tag);
+            add_history_nodes(node, whither, null);/*
                 .then(function(node) {
                     var history_len = 0;
                     if(histories_[node.gistname]) {
@@ -1352,7 +1357,7 @@ var editor = function () {
                         $(".history i",$(node.element)).addClass("button-disabled");
                     }
                     $tree_.tree('openNode', node);
-                });
+                });*/
         },
         load_callback: function(opts) {
             var that = this;
