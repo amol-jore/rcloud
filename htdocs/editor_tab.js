@@ -1032,7 +1032,7 @@ var editor = function () {
             var appear = $($.el.span({'class': 'notebook-commands appear'}));
             add_buttons = adder(appear);
             if(true) { // all notebooks have history - should it always be accessible?
-                var disable = false &&(current_.notebook===node.gistname && current_.version); "--- will make appropriate changes"
+                var disable = false //&&(current_.notebook===node.gistname && current_.version); "--- will make appropriate changes"
                 var history = ui_utils.fa_button('icon-time', 'history', 'history', icon_style, true);
                 // jqtree recreates large portions of the tree whenever anything changes
                 // so far this seems safe but might need revisiting if that improves
@@ -1110,6 +1110,8 @@ var editor = function () {
             url += '?notebook=' + opts.notebook;
             if(opts.version)
                 url = url + '&version='+opts.version;
+            if(opts.tag && opts.version)
+                url = url + '&tag='+opts.tag;
         }
         else if(opts.new_notebook)
             url += '?new_notebook=true';
@@ -1120,7 +1122,7 @@ var editor = function () {
             result.show_history(event.node.parent, false);
         else if(event.node.gistname) {
             if(event.click_event.metaKey || event.click_event.ctrlKey)
-                result.open_notebook(event.node.gistname, event.node.version, true, true);
+                result.open_notebook(event.node.gistname, event.node.version, event.node.name, true, true);
             else {
                 // it's weird that a notebook exists in two trees but only one is selected (#220)
                 // just select - and this enables editability
@@ -1128,7 +1130,7 @@ var editor = function () {
                    event.node.version == current_.version && event.node.version === null) // nulliness ok here
                     select_node(event.node);
                 else
-                    result.open_notebook(event.node.gistname, event.node.version || null, event.node.root, false);
+                    result.open_notebook(event.node.gistname, event.node.version || null, event.node.name, event.node.root, false);
             }
         }
         else
@@ -1250,7 +1252,7 @@ var editor = function () {
         find_next_copy_name: function(name) {
             return find_next_copy_name(username_, name);
         },
-        load_notebook: function(gistname, version, selroot, push_history) {
+        load_notebook: function(gistname, version, tag, selroot, push_history) {
             var that = this;
             selroot = selroot || true;
             return shell.load_notebook(gistname, version)
@@ -1259,17 +1261,18 @@ var editor = function () {
                     throw xep;
                 })
                 .then(this.load_callback({version: version,
+                                          tag: tag,
                                           selroot: selroot,
                                           push_history: push_history}));
         },
-        open_notebook: function(gistname, version, selroot, new_window) {
+        open_notebook: function(gistname, version, tag, selroot, new_window) {
             // really just load_notebook except possibly in a new window
             if(new_window) {
-                var url = make_edit_url({notebook: gistname, version: version});
+                var url = make_edit_url({notebook: gistname, version: version, tag: tag});
                 window.open(url, "_blank");
             }
             else
-                this.load_notebook(gistname, version, selroot);
+                this.load_notebook(gistname, version, tag, selroot);
         },
         new_notebook: function() {
             var that = this;
@@ -1292,11 +1295,13 @@ var editor = function () {
                 if (histories_[node.parent.gistname][i].version === node.version) {
                     histories_[node.parent.gistname][i].tag = tag_string;
                 }
+                if(histories_[node.parent.gistname][i].tag === tag_string && histories_[node.parent.gistname][i].version != node.version) {
+                    histories_[node.parent.gistname][i].tag = (node.version).substring(0,10);
+                }
             }
             rcloud.tag_notebook_version(node.parent.gistname, node.version, tag_string)
                 .then(result.show_history(node.parent, true))
-                .then(function(v){$(node.element).text(tag_string)})
-                .then(result.open_notebook(node.gistname, node.version || null, node.root, false));
+                .then(result.open_notebook(node.gistname, node.version || null, tag_string, node.root, false));
         },
         star_notebook: function(star, opts) {
             var that = this;
@@ -1416,7 +1421,7 @@ var editor = function () {
                  selroot: null,
                  push_history: true}, opts);
             return function(result) {
-                current_ = {notebook: result.id, version: options.version};
+                current_ = {notebook: result.id, version: options.version, tag: options.tag};
                 rcloud.config.set_current_notebook(current_);
                 rcloud.config.set_recent_notebook(result.id, (new Date()).toString());
                 RCloud.UI.share_button.set_link(result);
@@ -1430,7 +1435,7 @@ var editor = function () {
                      window.history.replaceState)
                     .bind(window.history)
                  */
-                var url = make_edit_url({notebook: result.id, version: options.version});
+                var url = make_edit_url({notebook: result.id, version: options.version, tag:options.tag});
                 window.history.replaceState("rcloud.notebook", null, url);
                 rcloud.api.set_url(url);
 
