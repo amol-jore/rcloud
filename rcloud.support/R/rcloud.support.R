@@ -513,7 +513,6 @@ rcloud.config.get.current.notebook <- function() {
 }
 
 rcloud.config.set.current.notebook <- function(current) {
-  write(toJSON(current),"/vagrant/work/current.txt")
   base <- usr.key(user=.session$username, notebook="system", "config", "current")
   rcs.set(rcs.key(base, "notebook"), current$notebook)
   rcs.set(rcs.key(base, "version"), current$version)
