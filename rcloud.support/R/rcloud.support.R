@@ -25,7 +25,6 @@ rcloud.load.notebook <- function(id, version = NULL) {
   }
   hist <- res$content$history
   for(i in 1:length(hist)) {
-    ###load it from redis or ff ow just assign the same as version(10)
     res$content$history[[i]]$tag <- hist[[i]]$version;
     tryCatch({
       tag <- rcs.get(hist[[i]]$version)
