@@ -505,13 +505,16 @@ rcloud.config.remove.notebook <- function(id)
 rcloud.config.get.current.notebook <- function() {
   base <- usr.key(user=.session$username, notebook="system", "config", "current")
   list(notebook = rcs.get(rcs.key(base, "notebook")),
-       version = rcs.get(rcs.key(base, "version")))
+       version = rcs.get(rcs.key(base, "version")),
+       tag = rcs.get(rcs.key(base, "tag")))
 }
 
 rcloud.config.set.current.notebook <- function(current) {
+  write(toJSON(current),"/vagrant/work/current.txt")
   base <- usr.key(user=.session$username, notebook="system", "config", "current")
   rcs.set(rcs.key(base, "notebook"), current$notebook)
   rcs.set(rcs.key(base, "version"), current$version)
+  rcs.set(rcs.key(base, "tag"), current$tag)
 }
 
 rcloud.config.new.notebook.number <- function()

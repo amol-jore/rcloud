@@ -703,11 +703,9 @@ var editor = function () {
     function select_node(node) {
         $tree_.tree('selectNode', node);
         scroll_into_view(node);
-        if(!node.version || true) /* --- will make appropriate changes once stabilized*/
-            RCloud.UI.notebook_title.make_editable(
-                node,
-                /*!shell.notebook.model.read_only()*/true); /* --- will make appropriate changes once stabilized*/
-        else RCloud.UI.notebook_title.make_editable(null);
+        RCloud.UI.notebook_title.make_editable(
+            node,
+            true);
     }
 
     function update_tree_entry(root, user, gistname, entry, create) {
@@ -1032,7 +1030,7 @@ var editor = function () {
             var appear = $($.el.span({'class': 'notebook-commands appear'}));
             add_buttons = adder(appear);
             if(true) { // all notebooks have history - should it always be accessible?
-                var disable = false //&&(current_.notebook===node.gistname && current_.version); "--- will make appropriate changes"
+                var disable = current_.notebook===node.gistname && current_.version;
                 var history = ui_utils.fa_button('icon-time', 'history', 'history', icon_style, true);
                 // jqtree recreates large portions of the tree whenever anything changes
                 // so far this seems safe but might need revisiting if that improves
@@ -1181,7 +1179,7 @@ var editor = function () {
             username_ = rcloud.username();
             var promise = load_everything().then(function() {
                 if(opts.notebook) { // notebook specified in url
-                    return that.load_notebook(opts.notebook, opts.version)
+                    return that.load_notebook(opts.notebook, opts.version, opts.tag)
                         .catch(function(xep) {
                             var message = "Could not open notebook " + opts.notebook;
                             if(opts.version)
@@ -1190,7 +1188,7 @@ var editor = function () {
                             throw xep;
                         });
                 } else if(!opts.new_notebook && current_.notebook) {
-                    return that.load_notebook(current_.notebook, current_.version)
+                    return that.load_notebook(current_.notebook, current_.version, current_.tag)
                         .catch(function(xep) {
                             // if loading fails for a reason that is not actually a loading problem
                             // then don't keep trying.
@@ -1421,6 +1419,13 @@ var editor = function () {
                  selroot: null,
                  push_history: true}, opts);
             return function(result) {
+                if(!options.tag) {
+                    for(var i=0;i<result.history.length;i++) {
+                        if(result.history[i].version === options.version) {
+                            options.tag = result.history[i].tag;
+                        }
+                    }
+                }
                 current_ = {notebook: result.id, version: options.version, tag: options.tag};
                 rcloud.config.set_current_notebook(current_);
                 rcloud.config.set_recent_notebook(result.id, (new Date()).toString());
