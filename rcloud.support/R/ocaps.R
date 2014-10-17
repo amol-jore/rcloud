@@ -57,9 +57,6 @@ unauthenticated.ocaps <- function()
 
       get_users = make.oc(rcloud.get.users),
 
-      # externally used ocaps
-      load_module_package = make.oc(rcloud.load.module.package),
-
       # javascript.R
       setup_js_installer = make.oc(rcloud.setup.js.installer),
 
@@ -121,6 +118,7 @@ authenticated.ocaps <- function()
       update_notebook = make.oc(rcloud.update.notebook),
       create_notebook = make.oc(rcloud.create.notebook),
       rename_notebook = make.oc(rcloud.rename.notebook),
+      tag_notebook_version = make.oc(rcloud.tag.notebook.version),
       publish_notebook = make.oc(rcloud.publish.notebook),
       unpublish_notebook = make.oc(rcloud.unpublish.notebook),
       set_notebook_visibility = make.oc(rcloud.set.notebook.visibility),
@@ -133,6 +131,9 @@ authenticated.ocaps <- function()
       # call_fastrweb_notebook...
       call_fastrweb_notebook = make.oc(rcloud.call.FastRWeb.notebook),
 
+      # externally used ocaps
+      load_module_package = make.oc(rcloud.load.module.package),
+      
       # file upload ocaps
       file_upload = list(
         create = make.oc(rcloud.upload.create.file),

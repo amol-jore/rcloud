@@ -1,5 +1,7 @@
 ## RCloud 1.2
 
+### Features
+
 * Multiple file upload.  File upload interface has been modernized to use
   promises and to split the UI from the back-end.
 
@@ -15,14 +17,6 @@
   don't want the use of Bootstrap alerts. `RCloud.upload_files` and
   `RCloud.upload_assets`, which return promises instead of using a callback,
   take a `react` struct for progress messages and overwrite confirmation.
-
-
-* Delete and edit comments
-
-* CSS highlighting and syntax
-
-* Disabled backspace as a shortcut to the back button to prevent some accidental
-  navigation away from RCloud
 
 * The notebook store is now abstrated through the `gist` package,
   allowing arbitrary back-ends. The traditional GitHub Gist backend is
@@ -41,6 +35,52 @@
    will call the notebook with `.path.info` set to `/foo/bar`. Note
    that the `.self` part distinguishes asset lookup from a path info
    call.
+
+* Actions are logged on the server side using Rserve's `ulog`.
+
+* Preliminary [RStudio Shiny](http://shiny.rstudio.com/) support via rcloud.shiny
+  package.  rcloud.shiny emulates a network connection to run Shiny on an RCloud
+  server and client instead of Shiny Server.  Basic functionality is supported,
+  but Shiny extensions are not supported yet.
+
+* It is possible to create custom side panels for RCloud edit mode
+
+### Improvements
+
+* Disabled backspace as a shortcut to the back button to prevent some accidental
+  navigation away from RCloud
+
+* MathJax is installed directly into the htdocs/ directly, to speed startup
+  and make RCloud easier to install in private intranets.
+
+* Delete and edit comments.  Multiline comments are allowed, and newlines
+  are displayed properly in comments.
+
+* Date and time of notebook versions are shown in a minimal but more
+  informative format, displaying only the parts that are different
+  from the previous version.
+
+* CSS highlighting and syntax
+
+* Improved, more consistent control styles.
+
+* Ctrl-S and Cmd-S now save the notebook rather than invoking the browser's
+  save command
+
+### Bug fixes
+
+* Assets without filename extensions are allowed.
+
+* Insert cell button inserts a cell of the same language as the cell
+  below it.
+
+* Error message for attempting to rename an asset over another one.
+
+* Downloading of files (Export Notebook / Export as R Source) now works
+  in Firefox
+
+* Fixed a bug where arrow keys were captured by the notebook so the selection
+  could be moved off the current notebook
 
 
 ## RCloud 1.1.2
