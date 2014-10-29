@@ -49,6 +49,11 @@ body {
     padding-top: 51px; /* exact same height as navbar */
 }
 
+body, .navbar-fixed-top, .navbar-fixed-bottom {
+  margin-right: 0 !important;
+}
+
+
 .internals-float {
     float: left;
     background-color: #eee;
@@ -222,6 +227,12 @@ rect.frame {
     background-color: white;
 }
 
+.cell-status .cell-controls.flipped {
+    top: 0;
+    bottom: auto;
+    border-radius: 0px 0px 4px 4px;
+}
+
 .notebook-cell .cell-insert-control {
     color: #555;
     position: absolute;
@@ -325,12 +336,28 @@ form input.linkbox {
     padding: 2px;
 }
 
-.nav li sub {
-    color: #ddd;
+.nav .caret {
+    border-top-color: #ccc;
 }
+
+.nav a:hover .caret {
+    border-top-color: #aaa;
+    border-bottom-color: #aaa;
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+  background-color: black;
+}
+
 
 #fatal-dialog .modal-content {
     background-color: #f2dede;
+}
+
+input[type=text].form-control-ext {
+    padding-left: 5px;
 }
 
 /******************************************************************************/
@@ -362,6 +389,12 @@ ul.jqtree-tree .jqtree-title.private {
 .notebook-date {
 }
 
+.notebook-time {
+    display: inline-block;
+    min-width: 2.5em;
+    text-align: right;
+}
+
 .notebook-right {
     float: right;
 }
@@ -376,10 +409,14 @@ ul.jqtree-tree .jqtree-title.private {
     color: black;
 }
 
-.notebook-commands.appear {
+.notebook-commands.appear-wrapper {
     position: absolute;
-    bottom: 0px;
-    background-color: white;
+    right: 30px;
+    width: 100px;
+}
+
+.notebook-commands.appear {
+    float: right;
 }
 
 li.jqtree-selected .notebook-commands {
@@ -399,6 +436,10 @@ li.jqtree-selected .notebook-commands {
     width: 100%;
 }
 
+#search-form {
+    margin-bottom: 0px;
+}
+
 #search-wrapper td, #search-wrapper tr {
     padding: 0;
     margin: 0;
@@ -407,6 +448,11 @@ li.jqtree-selected .notebook-commands {
 #search-header {
     display: table-row;
     width: 100%;
+    height:50px;
+}
+
+#search-header form div.input-group {
+    margin: 0px -5px;
 }
 
 #search-summary {
@@ -414,9 +460,14 @@ li.jqtree-selected .notebook-commands {
 }
 
 #search-results-row {
-    display: none; // will be display: table-row;
+    display: none; /* will be display: table-row; */
     height: 100%;
     width: 100%;
+}
+
+#search-results-pagination {
+    display:table-row;
+    text-align:center
 }
 
 #search-results-scroller {
@@ -598,26 +649,47 @@ li.jqtree-selected .notebook-commands {
     float: left;
     color: #000;
     display:none;
+    position: absolute;
+    right: 0.75ex
 }
 .comment-header-close:hover{
     cursor: pointer;
 }
 .comment-body {
-    color: #555
+    color: #555;
+    position: relative;
 }
 
 .comment-body-text {
     color: #555;
     float: left;
     margin-bottom: .4em;
+    max-width: 93%;
+    min-width: 93%;
+    padding: 2px;
+    margin: 0px 5px;
 }
 
 #comment-entry {
     width: 100%;
     padding-bottom: 2px;
     clear:both
-
 }
+
+#comment-entry-body {
+    height:41px;
+    min-height:41px;
+    width:65%;
+    overflow:hidden;
+    padding:2px;
+    margin:3px;
+}
+
+#comment-submit {
+    padding-top: 2px;
+    margin-top: 3px;
+}
+
 
 /******************************************************************************/
 
@@ -755,13 +827,13 @@ a.accordion-toggle:hover {
     text-decoration: none;
 }
 
-a.accordion-toggle [class^="icon-"], a.accordion-toggle [class*="icon-"] {
+a.accordion-toggle.left > i {
     position: relative;
 }
 
-a.accordion-toggle.right [class^="icon-"], a.accordion-toggle.right [class*="icon-"] {
+a.accordion-toggle.right > i {
     position: absolute;
-    right: 0px;
+    right: 1.1em;
 }
 
 .panel-default > .panel-heading {
@@ -846,6 +918,29 @@ a.accordion-toggle.right [class^="icon-"], a.accordion-toggle.right [class*="ico
     background-color: rgba(224,224,224,0.75);
 }
 
+#forked-from-desc {
+    color: #777;
+    position: absolute;
+    bottom: 4px;
+    left: 6ex;
+    width: 700;
+    pointer-events: none;
+    cursor: text;
+    overflow-y: hidden;
+    height: 1.5em;
+}
+
+#forked-from-desc a {
+    color: #4265a7;
+    pointer-events: auto;
+}
+
+#forked-from-desc a:hover {
+    color: #428bca
+}
+
+
+
 /*****************************************************************************/
 /* Fix that awful select from webkit */
 
@@ -915,4 +1010,71 @@ a.accordion-toggle.right [class^="icon-"], a.accordion-toggle.right [class*="ico
 pre > .vt100 {
     padding: 16px;
     display: block;
+}
+
+.btn-default-ext {
+    color: #ffffff;
+    background-color: #428bca;
+    border-color: #357ebd;
+    width: 33px;
+    height: 24px;
+}
+
+.form-control-ext {
+    width: 125px;
+    height: 24px;
+    font-size: inherit;
+    line-height: inherit;
+    color: #555555;
+    vertical-align: middle;
+    background-color: #ffffff;
+    border: 1px solid rgb(169, 169, 169);
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.btn-default-ext:hover,
+.btn-default-ext:focus,
+.btn-default-ext:active,
+.btn-default-ext.active,
+.open .dropdown-toggle.btn-default-ext {
+    color: #ffffff;
+    background-color: #3276b1;
+    border-color: #285e8e;
+}
+
+.btn-default-ext:active,
+.btn-default-ext.active,
+.open .dropdown-toggle.btn-default-ext {
+    background-image: none;
+}
+.input-group .form-control-ext {
+    width: 100%;
+    margin-bottom: 0;
+}
+.input-group-sm > .form-control-ext,
+.input-group-sm > .input-group-addon,
+.input-group-sm > .input-group-btn > .btn {
+    height: 24px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.input-group .form-control-ext:first-child,
+.input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+/*
+* extending bootstrap pagination class
+*/
+.pagination {
+    margin: 3px 0px;
+}
+.pagination > li > a,
+.pagination > li > span {
+    padding: 3px 8px;
 }

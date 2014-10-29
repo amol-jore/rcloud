@@ -27,7 +27,7 @@ RCloud.promisify_paths = (function() {
         };
     }
 
-    function process_paths(ocaps, paths) {
+    function process_paths(ocaps, paths, replace) {
         function get(path) {
             var v = ocaps;
             for (var i=0; i<path.length; ++i)
@@ -39,9 +39,10 @@ RCloud.promisify_paths = (function() {
             var v = ocaps;
             for (var i=0; i<path.length-1; ++i)
                 v = v[path[i]];
-            v[path[path.length-1] + "Async"] = val;
+            v[path[path.length-1] + suffix] = val;
         }
 
+        var suffix = replace ? '' : 'Async';
         _.each(paths, function(path) {
             var fn = get(path);
             set(path, fn ? rcloud_handler(path.join('.'), Promise.promisify(fn)) : null);
@@ -81,6 +82,8 @@ RCloud.create = function(rcloud_ocaps) {
             ["load_notebook"],
             ["call_notebook"],
             ["install_notebook_stylesheets"],
+            ["tag_notebook_version"],
+            ["get_version_by_tag"],
             ["get_users"],
             ["log", "record_cell_execution"],
             ["setup_js_installer"],
@@ -142,6 +145,14 @@ RCloud.create = function(rcloud_ocaps) {
             return rcloud_github_handler(
                 "rcloud.load.notebook " + id,
                 rcloud_ocaps.load_notebookAsync(id, version));
+        };
+
+        rcloud.tag_notebook_version = function(gist_id,version,tag_name) {
+            return rcloud_ocaps.tag_notebook_versionAsync(gist_id,version,tag_name);
+        };
+
+        rcloud.get_version_of_tag = function(gist_id,tag) {
+            return rcloud_ocaps.get_version_of_tagAsync(gist_id,tag);
         };
 
         rcloud.call_notebook = function(id, version) {
@@ -320,6 +331,9 @@ RCloud.create = function(rcloud_ocaps) {
             ["get_notebook_info"],
             ["get_multiple_notebook_infos"],
             ["set_notebook_info"],
+            ["get_notebook_property"],
+            ["set_notebook_property"],
+            ["remove_notebook_property"],
             ["notebook_by_name"]
         ];
         RCloud.promisify_paths(rcloud_ocaps, paths);
@@ -459,6 +473,9 @@ RCloud.create = function(rcloud_ocaps) {
             if(!info.last_commit) return Promise.reject(new Error("attempt to set info no last_commit"));
             return rcloud_ocaps.set_notebook_infoAsync(id, info);
         };
+        rcloud.get_notebook_property = rcloud_ocaps.get_notebook_propertyAsync;
+        rcloud.set_notebook_property = rcloud_ocaps.set_notebook_propertyAsync;
+        rcloud.remove_notebook_property = rcloud_ocaps.remove_notebook_propertyAsync;
 
         rcloud.get_notebook_by_name = function(user, path) {
             return rcloud_ocaps.notebook_by_nameAsync(user, path);

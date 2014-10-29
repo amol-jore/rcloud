@@ -21,13 +21,8 @@ var shell = (function() {
     }
 
     function download_as_file(filename, content, mimetype) {
-        var element = document.createElement('a'),
-            file = new Blob([content], {type: mimetype}),
-            fileURL = URL.createObjectURL(file);
-        element.download = filename;
-        element.href = fileURL;
-        element.dataset.downloadurl = [mimetype, element.download, element.href].join(":");
-        element.click();
+        var file = new Blob([content], {type: mimetype});
+        saveAs(file, filename); // FileSaver.js
     }
 
     function on_new(notebook) {
@@ -38,6 +33,7 @@ var shell = (function() {
 
     function on_load(notebook) {
         RCloud.UI.notebook_title.set(notebook.description);
+        RCloud.UI.notebook_title.update_fork_info(notebook.fork_of);
         notebook_user_ = notebook.user.login;
         RCloud.UI.configure_readonly();
         _.each(notebook_view_.sub_views, function(cell_view) {
@@ -104,6 +100,7 @@ var shell = (function() {
             var cell = notebook_controller_.append_cell(content, language);
             RCloud.UI.command_prompt.history.execute(content);
             if(execute) {
+                RCloud.UI.command_prompt.focus();
                 cell.execute().then(scroll_to_end);
             }
         },
@@ -143,9 +140,18 @@ var shell = (function() {
                     // hack: copy without history as a first pass, because github forbids forking oneself
                     promise_fork = rcloud.get_notebook(gistname, version)
                         .then(function(notebook) {
+                            // this smells
+                            var fork_of = {owner: {login: notebook.user.login},
+                                           description: notebook.description,
+                                           id: notebook.id
+                                          };
                             notebook = sanitize_notebook(notebook);
                             notebook.description = editor.find_next_copy_name(notebook.description);
-                            return notebook_controller_.create_notebook(notebook);
+                            return notebook_controller_.create_notebook(notebook)
+                                .then(function(result) {
+                                    return rcloud.set_notebook_property(result.id, 'fork_of', fork_of)
+                                        .return(result);
+                                });
                         });
                 }
                 else promise_fork = notebook_controller_
@@ -354,6 +360,7 @@ var shell = (function() {
                 $("body").append(dialog);
                 dialog
                     .on('show.bs.modal', function() {
+                        $("#notebook-file-upload")[0].value = null;
                         notebook_status.text('');
                         notebook_status.hide();
                         notebook_desc_content.val('');
